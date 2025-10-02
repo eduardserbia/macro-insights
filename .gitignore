@@ -1,0 +1,46 @@
+# 🐍 Python cache & compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 📦 Virtual environment
+venv/
+env/
+
+# 📁 MacOS system files
+.DS_Store
+
+# 🧪 Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# 📊 Output and temporary build folders
+out/
+build/
+dist/
+*.egg-info/
+
+# 🖼️ Diagrams auto-generated (оставляем только diagrams/)
+out/
+*.png
+*.pdf
+
+# 🔐 Credentials or secrets (если появятся)
+*.env
+.env
+
+# 🧪 Coverage / test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ⚙️ IDE & editor files
+.vscode/
+.idea/
+
+# 🚀 Docker / Compose artifacts
+*.log
+
+# 🧪 Temporary backups
+*.bak
+*.swp
