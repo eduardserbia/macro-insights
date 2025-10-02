@@ -1,0 +1,60 @@
+name: Build diagrams (on change)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'make_arch_diagrams.py'
+      - 'diagram_lib.py'
+      - 'assets/**'
+      - '.github/workflows/diagrams.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'make_arch_diagrams.py'
+      - 'diagram_lib.py'
+      - 'assets/**'
+      - '.github/workflows/diagrams.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: diagrams-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pillow matplotlib
+
+      # 🕒 Дата билда в часовом поясе Белграда → переменная BUILD_DATE
+      - name: Export build date (Europe/Belgrade)
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y tzdata
+          echo "BUILD_DATE=$(TZ=Europe/Belgrade date '+%Y-%m-%d %H:%M %Z')" >> $GITHUB_ENV
+
+      - name: Build diagrams
+        env:
+          BUILD_DATE: ${{ env.BUILD_DATE }}
+        run: python make_arch_diagrams.py
+
+      - name: Upload artifacts (out/)
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagrams
+          path: out/
+          retention-days: 14
+
