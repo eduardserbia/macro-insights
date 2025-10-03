@@ -1,0 +1,4 @@
+pillow
+matplotlib
+dbt-core
+dbt-clickhouse
