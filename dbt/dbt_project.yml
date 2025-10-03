@@ -1,7 +1,6 @@
 name: "macro_insights"
 version: "1.0"
 config-version: 2
-
 profile: "macro_insights"
 
 model-paths: ["models"]
@@ -13,13 +12,12 @@ test-paths: ["tests"]
 models:
   macro_insights:
     staging:
-      +schema: stg
-      +materialized: view
+      +schema: stg          # -> macro_insights_stg
+      +materialized: view   # staging always VIEW
     marts:
-      +schema: mart
-      +materialized: table
-
+      +schema: mart         # -> macro_insights_mart
+      +materialized: table  # marts as TABLE (fast for BI)
 seeds:
   macro_insights:
-    +schema: seed          # -> macro_insights_seed
+    +schema: seed          # -> schema macro_insights_seed
     +quote_columns: false

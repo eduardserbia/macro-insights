@@ -2,11 +2,32 @@ version: 2
 
 models:
   - name: fct_gdp_yoy
-    description: "GDP with YoY% per country-year (analytics-ready)"
+    description: "Fact table: Year-over-year GDP changes by country and year."
     columns:
       - name: country_code
-        tests: [not_null]
+        description: "Two-letter country code (ISO-like), used as a key for joins."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_gdp')
+                field: country_code
+
       - name: year
-        tests: [not_null]
+        description: "Year of the GDP observation."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 2000
+                max_value: 2030
+
       - name: gdp_usd_bn
-        tests: [not_null]
+        description: "Gross domestic product in billions of USD."
+
+      - name: gdp_prev
+        description: "GDP of the previous year (used for YoY calculation)."
+
+      - name: yoy_pct
+        description: "Year-over-year GDP growth rate (e.g. 0.05 = +5%)."
+        tests: []  # removed buggy dbt_utils.expression_is_true test

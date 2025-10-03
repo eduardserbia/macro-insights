@@ -2,11 +2,33 @@ version: 2
 
 models:
   - name: stg_gdp
-    description: "Clean GDP seed (typed & validated)"
+    description: "Staging model for GDP data loaded from seed (gdp.csv)."
     columns:
       - name: country_code
-        tests: [not_null]
+        description: "2–3 letter country code (uppercase)."
+        tests:
+          - not_null
+
+      - name: country_name
+        description: "Human-readable country name."
+        tests:
+          - not_null
+
       - name: year
-        tests: [not_null]
+        description: "Year of GDP observation."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 2010
+                max_value: 2025
+
       - name: gdp_usd_bn
-        tests: [not_null]
+        description: "GDP in billions of USD."
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['country_code', 'year']
