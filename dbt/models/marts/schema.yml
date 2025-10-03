@@ -2,32 +2,31 @@ version: 2
 
 models:
   - name: fct_gdp_yoy
-    description: "Fact table: Year-over-year GDP changes by country and year."
+    description: >
+      GDP YoY fact table:
+      per-country previous-year GDP and YoY percent change.
+      yoy_pct is a fraction (e.g. 0.05 = +5%).
     columns:
       - name: country_code
-        description: "Two-letter country code (ISO-like), used as a key for joins."
+        description: ISO country code
         tests:
           - not_null
           - relationships:
               arguments:
                 to: ref('stg_gdp')
                 field: country_code
-
       - name: year
-        description: "Year of the GDP observation."
+        description: Calendar year
         tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
-                min_value: 2000
-                max_value: 2030
-
+                min_value: 2010
+                max_value: 2025
       - name: gdp_usd_bn
-        description: "Gross domestic product in billions of USD."
-
+        description: GDP current year (USD bn)
       - name: gdp_prev
-        description: "GDP of the previous year (used for YoY calculation)."
-
+        description: Previous year GDP (USD bn)
       - name: yoy_pct
-        description: "Year-over-year GDP growth rate (e.g. 0.05 = +5%)."
-        tests: []  # removed buggy dbt_utils.expression_is_true test
+        description: Year-over-year GDP growth (fraction, -1..10 allowed for edge cases)
+        # tests: handled by custom SQL test 'yoy_pct_bounds.sql'

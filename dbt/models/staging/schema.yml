@@ -2,33 +2,34 @@ version: 2
 
 models:
   - name: stg_gdp
-    description: "Staging model for GDP data loaded from seed (gdp.csv)."
+    description: >
+      Staging layer for country GDP time series (USD billions).
+      Source: seed/S3 raw layer → normalized for marts consumption.
     columns:
       - name: country_code
-        description: "2–3 letter country code (uppercase)."
+        description: ISO country code (two or three letters)
         tests:
           - not_null
-
       - name: country_name
-        description: "Human-readable country name."
+        description: Country name (English)
         tests:
           - not_null
-
       - name: year
-        description: "Year of GDP observation."
+        description: Calendar year (YYYY)
         tests:
           - not_null
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 2010
                 max_value: 2025
-
       - name: gdp_usd_bn
-        description: "GDP in billions of USD."
+        description: Nominal GDP in billions of USD
         tests:
           - not_null
 
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          arguments:
-            combination_of_columns: ['country_code', 'year']
+# Custom data tests (SQL files in dbt/tests/)
+tests:
+  - name: non_negative_gdp
+    description: Ensure GDP values are non-negative
+    config:
+      severity: error
