@@ -58,8 +58,7 @@ jobs:
       - name: Show dbt versions
         run: |
           dbt --version || true
-          python -c "import importlib; print('dbt-core:',importlib.metadata.version('dbt-core'))"
-          python -c "import importlib; print('dbt-clickhouse:',importlib.metadata.version('dbt-clickhouse'))"
+          pip show dbt-core dbt-clickhouse || true
 
       - name: Ensure CI profile exists
         run: |
