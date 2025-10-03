@@ -3,6 +3,23 @@
 """
 make_arch_diagrams.py — generates 4 diagrams (PNG 4K + PDF) using local logos from ./assets
 """
+import os
+from datetime import datetime
+try:
+    from zoneinfo import ZoneInfo  # Py3.9+
+except Exception:
+    ZoneInfo = None
+
+def resolve_build_date():
+    env = os.getenv("BUILD_DATE")
+    if env:
+        return env
+    if ZoneInfo is not None:
+        return datetime.now(ZoneInfo("Europe/Belgrade")).strftime("%Y-%m-%d %H:%M %Z")
+    return datetime.now().strftime("%Y-%m-%d %H:%M")
+
+BUILD_DATE = resolve_build_date()
+
 from pathlib import Path
 import matplotlib.pyplot as plt
 from diagram_lib import (FIG_W, FIG_H, DPI, init_axes, draw_card, place_logo_fit, arrow)
@@ -27,6 +44,10 @@ LOGO = {
     "fastapi": ASSETS / "fastapi.jpeg",
     "nextjs": ASSETS / "nextjs.jpeg",
 }
+
+def footer_build_date(ax):
+    # правый нижний угол
+    ax.text(98, 3.5, f"Build: {BUILD_DATE}", fontsize=12, color="#666", ha="right")
 
 def title_block(ax, subtitle=True):
     ax.text(2, 97, TITLE, fontsize=30, fontweight="bold", color="#111")
@@ -110,6 +131,7 @@ def presentation_full_stack():
     arrow(ax, 25, 18, 56, 18, "trigger")
     arrow(ax, 56, 18, 56, 22, "")
 
+    footer_build_date(ax)
     save(fig, "presentation_full_stack")
 
 def presentation_data_flow():
@@ -168,6 +190,7 @@ def presentation_data_flow():
     ax.text(2, 6, SIGN, fontsize=16, color="#444")
     ax.text(98, 6, YEAR, fontsize=16, color="#444", ha="right")
 
+    footer_build_date(ax)
     save(fig, "presentation_data_flow")
 
 def technical_arch_environments():
@@ -210,6 +233,7 @@ def technical_arch_environments():
               face=gray, border="#222")
     place_logo_fit(ax, LOGO["github"], cx=93.5, cy=47.0, target_h=3.0, max_w=3.0)
 
+    footer_build_date(ax)
     save(fig, "technical_arch_environments")
 
 def technical_cicd_reference():
@@ -249,6 +273,7 @@ def technical_cicd_reference():
     }.items():
         place_logo_fit(ax, LOGO[key], cx=cx, cy=cy, target_h=th, max_w=mw)
 
+    footer_build_date(ax)
     save(fig, "technical_cicd_reference")
 
 def main():
