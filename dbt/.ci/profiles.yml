@@ -1,0 +1,14 @@
+macro_insights:
+  target: docs
+  outputs:
+    docs:
+      type: clickhouse
+      host: 127.0.0.1
+      port: 8443
+      user: dummy
+      password: dummy
+      secure: True
+      verify: False
+      database: default
+      schema: dbt_docs
+      threads: 1

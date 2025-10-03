@@ -1,0 +1,17 @@
+name: 'macro_insights'
+version: '1.0.0'
+config-version: 2
+
+profile: 'macro_insights'
+
+model-paths: ['models']
+target-path: 'target'
+clean-targets: ['target', 'dbt_packages']
+
+models:
+  macro_insights:
+    +materialized: view
+    staging:
+      +schema: stg
+    marts:
+      +schema: mart
