@@ -1,13 +1,13 @@
 macro_insights:
-  target: docs
+  target: dev
   outputs:
-    docs:
+    dev:
       type: clickhouse
-      host: 127.0.0.1
+      host: "{{ env_var('CH_HOST') }}"
       port: 8443
-      user: dummy
-      password: dummy
-      secure: True
-      verify: False
-      schema: dbt_docs
+      user: "{{ env_var('CH_USER') }}"
+      password: "{{ env_var('CH_PASSWORD') }}"
+      secure: true
+      verify: true
+      schema: "{{ env_var('CH_SCHEMA', 'macro_insights') }}"
       threads: 1
