@@ -7,6 +7,7 @@ on:
       - 'make_arch_diagrams.py'
       - 'diagram_lib.py'
       - 'assets/**'
+      - 'dbt/**'
       - '.github/workflows/diagrams.yml'
       - 'requirements.txt'
   workflow_dispatch:
@@ -49,4 +50,29 @@ jobs:
         with:
           name: diagrams
           path: out/
+          retention-days: 14
+
+      - name: dbt deps
+        working-directory: dbt
+        env:
+          DBT_PROFILES_DIR: ${{ github.workspace }}/dbt/.ci
+        run: dbt deps
+
+      - name: dbt parse (no connection)
+        working-directory: dbt
+        env:
+          DBT_PROFILES_DIR: ${{ github.workspace }}/dbt/.ci
+        run: dbt parse
+
+      - name: dbt docs generate (no compile)
+        working-directory: dbt
+        env:
+          DBT_PROFILES_DIR: ${{ github.workspace }}/dbt/.ci
+        run: dbt docs generate --no-compile
+
+      - name: Upload artifacts (dbt docs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-docs
+          path: dbt/target/
           retention-days: 14
