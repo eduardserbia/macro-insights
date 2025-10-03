@@ -1,23 +1,22 @@
 name: "macro_insights"
 version: "1.0"
 config-version: 2
-profile: "macro_insights"
 
-model-paths: ["models"]
-seed-paths: ["seeds"]
-macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
-test-paths: ["tests"]
+profile: "macro_insights"
 
 models:
   macro_insights:
+    # ---- Staging layer (views) in a dedicated schema ----
     staging:
-      +schema: stg          # -> macro_insights_stg
-      +materialized: view   # staging always VIEW
+      +schema: macro_insights_stg
+      +materialized: view
+
+    # ---- Marts layer (tables) in a dedicated schema ----
     marts:
-      +schema: mart         # -> macro_insights_mart
-      +materialized: table  # marts as TABLE (fast for BI)
+      +schema: macro_insights_mart
+      +materialized: table
+
 seeds:
-  macro_insights:
-    +schema: seed          # -> schema macro_insights_seed
-    +quote_columns: false
+  # ---- Seed data goes to its own schema ----
+  +schema: macro_insights_seed
+  +quote_columns: false
