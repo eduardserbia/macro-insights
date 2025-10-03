@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: stg_gdp
+    description: "Clean GDP seed (typed & validated)"
+    columns:
+      - name: country_code
+        tests: [not_null]
+      - name: year
+        tests: [not_null]
+      - name: gdp_usd_bn
+        tests: [not_null]

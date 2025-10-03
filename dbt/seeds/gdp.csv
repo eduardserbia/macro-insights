@@ -1,0 +1,42 @@
+country_code,country_name,year,gdp_usd_bn
+DE,Germany,2019,3860
+DE,Germany,2020,3800
+DE,Germany,2021,4220
+DE,Germany,2022,4070
+DE,Germany,2023,4090
+
+FR,France,2019,2710
+FR,France,2020,2600
+FR,France,2021,2960
+FR,France,2022,2800
+FR,France,2023,3000
+
+GB,United Kingdom,2019,2870
+GB,United Kingdom,2020,2700
+GB,United Kingdom,2021,3180
+GB,United Kingdom,2022,3100
+GB,United Kingdom,2023,3200
+
+US,United States,2019,21430
+US,United States,2020,20940
+US,United States,2021,23600
+US,United States,2022,25460
+US,United States,2023,27100
+
+CN,China,2019,14280
+CN,China,2020,14720
+CN,China,2021,17730
+CN,China,2022,17960
+CN,China,2023,18000
+
+RU,Russia,2019,1690
+RU,Russia,2020,1480
+RU,Russia,2021,1770
+RU,Russia,2022,2240
+RU,Russia,2023,2300
+
+RS,Serbia,2019,52
+RS,Serbia,2020,53
+RS,Serbia,2021,63
+RS,Serbia,2022,68
+RS,Serbia,2023,74

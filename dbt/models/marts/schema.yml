@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: fct_gdp_yoy
+    description: "GDP with YoY% per country-year (analytics-ready)"
+    columns:
+      - name: country_code
+        tests: [not_null]
+      - name: year
+        tests: [not_null]
+      - name: gdp_usd_bn
+        tests: [not_null]

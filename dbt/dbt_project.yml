@@ -1,17 +1,25 @@
-name: 'macro_insights'
-version: '1.0.0'
+name: "macro_insights"
+version: "1.0"
 config-version: 2
 
-profile: 'macro_insights'
+profile: "macro_insights"
 
-model-paths: ['models']
-target-path: 'target'
-clean-targets: ['target', 'dbt_packages']
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
 
 models:
   macro_insights:
-    +materialized: view
     staging:
       +schema: stg
+      +materialized: view
     marts:
       +schema: mart
+      +materialized: table
+
+seeds:
+  macro_insights:
+    +schema: seed          # -> macro_insights_seed
+    +quote_columns: false
