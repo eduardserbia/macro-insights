@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -34,60 +34,49 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          python -c "import sys,platform; print('PY',sys.version); print('PLAT',platform.platform())"
-          python -c "import PIL,matplotlib; print('Pillow',PIL.__version__); print('mpl',matplotlib.__version__)"
+          python -c "import sys,platform; print('Python:', sys.version)"
+          python -c "import PIL, matplotlib; print('Pillow:', PIL.__version__); print('Matplotlib:', matplotlib.__version__)"
 
       - name: Export build date (Europe/Belgrade)
         run: |
           sudo apt-get update -y && sudo apt-get install -y tzdata
           echo "BUILD_DATE=$(TZ=Europe/Belgrade date '+%Y-%m-%d %H:%M %Z')" >> $GITHUB_ENV
 
-      - name: Build diagrams
+      - name: Build architecture diagrams
         env:
           BUILD_DATE: ${{ env.BUILD_DATE }}
         run: python make_arch_diagrams.py
 
-      - name: Upload artifacts (out/)
+      - name: Upload diagrams artifacts
         uses: actions/upload-artifact@v4
         with:
           name: diagrams
           path: out/
           retention-days: 14
 
-      # ---- dbt diagnostics & docs (parse-only) ----
-      - name: Show dbt versions
-        run: |
-          dbt --version || true
-          pip show dbt-core dbt-clickhouse || true
-
+      # ---- dbt (offline) DAG manifest generation ----
       - name: Ensure CI profile exists
         run: |
           mkdir -p dbt/.ci
-          test -f dbt/.ci/profiles.yml && echo "profiles.yml exists" || (echo "profiles.yml missing!" && exit 1)
+          test -f dbt/.ci/profiles.yml && echo "profiles.yml exists ✅" || (echo "profiles.yml missing ❌" && exit 1)
           ls -la dbt/.ci
           ls -la dbt/models || true
 
-      - name: dbt deps
+      - name: Install dbt dependencies
         working-directory: dbt
         env:
           DBT_PROFILES_DIR: ${{ github.workspace }}/dbt/.ci
         run: dbt deps
 
-      - name: dbt parse (no connection)
+      - name: Generate manifest (offline parse)
         working-directory: dbt
         env:
           DBT_PROFILES_DIR: ${{ github.workspace }}/dbt/.ci
         run: dbt parse
 
-      - name: dbt docs generate (no compile)
-        working-directory: dbt
-        env:
-          DBT_PROFILES_DIR: ${{ github.workspace }}/dbt/.ci
-        run: dbt docs generate --no-compile
-
-      - name: Upload artifacts (dbt docs)
+      - name: Upload manifest artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dbt-docs
-          path: dbt/target/
+          name: dbt-manifest
+          path: dbt/target/manifest.json
           retention-days: 14
