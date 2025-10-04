@@ -55,3 +55,6 @@ profiles.yml
 .idea/
 .vscode/
 .mailmap
+
+# local scripts
+scripts/*
