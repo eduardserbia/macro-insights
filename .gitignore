@@ -41,6 +41,7 @@ htmlcov/
 # 🧪 Temporary backups
 *.bak
 *.swp
+*.tmp
 
 # dbt build artifacts
 target/
@@ -58,3 +59,6 @@ profiles.yml
 
 # local scripts
 scripts/*
+
+# local logs
+.logs/
