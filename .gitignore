@@ -62,3 +62,7 @@ scripts/*
 
 # local logs
 .logs/
+
+# Airflow local env
+.env.airflow
+airflow/logs/
