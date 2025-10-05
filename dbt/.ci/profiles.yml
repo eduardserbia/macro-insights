@@ -7,7 +7,7 @@ macro_insights:
       port: 8443
       user: "{{ env_var('CH_USER') }}"
       password: "{{ env_var('CH_PASSWORD') }}"
+      schema: "{{ env_var('CH_DATABASE', 'macro_insights') }}"
       secure: true
-      verify: true
-      schema: "{{ env_var('CH_SCHEMA', 'macro_insights') }}"
-      threads: 1
+      verify: false
+      threads: 4

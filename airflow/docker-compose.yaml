@@ -1,0 +1,108 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 5s
+      retries: 10
+
+  airflow-init:
+    build: .
+    image: macro-airflow:local
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "dbt-core==1.10.13 dbt-clickhouse==1.9.3 boto3"
+      DBT_PROFILES_DIR: /opt/airflow/dbt/.ci
+      CH_HOST: ${CH_HOST}
+      CH_USER: ${CH_USER}
+      CH_PASSWORD: ${CH_PASSWORD}
+      CH_DATABASE: ${CH_DATABASE}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: /bin/bash
+    command:
+      - -lc
+      - |
+        set -e
+        airflow db migrate
+        echo "✅ DB ready"
+        airflow users create \
+          --role Admin \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --email admin@example.com || true
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ../dbt:/opt/airflow/dbt    # ✅ монтируем dbt проект внутрь контейнера
+      - ../scripts:/opt/airflow/scripts
+
+  airflow-webserver:
+    build: .
+    image: macro-airflow:local
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "dbt-core==1.10.13 dbt-clickhouse==1.9.3 boto3"
+      DBT_PROFILES_DIR: /opt/airflow/dbt/.ci
+      CH_HOST: ${CH_HOST}
+      CH_USER: ${CH_USER}
+      CH_PASSWORD: ${CH_PASSWORD}
+      CH_DATABASE: ${CH_DATABASE}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: webserver
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ../dbt:/opt/airflow/dbt    # ✅ сюда тоже
+      - ../scripts:/opt/airflow/scripts
+  airflow-scheduler:
+    build: .
+    image: macro-airflow:local
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      _PIP_ADDITIONAL_REQUIREMENTS: "dbt-core==1.10.13 dbt-clickhouse==1.9.3 boto3"
+      DBT_PROFILES_DIR: /opt/airflow/dbt/.ci
+      CH_HOST: ${CH_HOST}
+      CH_USER: ${CH_USER}
+      CH_PASSWORD: ${CH_PASSWORD}
+      CH_DATABASE: ${CH_DATABASE}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: scheduler
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ../dbt:/opt/airflow/dbt    # ✅ и сюда
+      - ../scripts:/opt/airflow/scripts
+
+volumes:
+  pg_data:

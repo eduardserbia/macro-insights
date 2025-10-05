@@ -1,5 +1,7 @@
 # 🐍 Python cache & compiled files
 __pycache__/
+# игнорировать все pycache во всём проекте
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
