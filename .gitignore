@@ -1,70 +1,69 @@
 # 🐍 Python cache & compiled files
 __pycache__/
-# игнорировать все pycache во всём проекте
 **/__pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# 📦 Virtual environment
+# 📦 Virtual environments
 venv/
 env/
+.venv/
 
 # 🧪 Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# 📊 Output and temporary build folders
+# 📊 Build / dist artifacts
 out/
 build/
 dist/
 *.egg-info/
 
-# 🖼️ Diagrams auto-generated (оставляем только diagrams/)
-out/
-*.png
-*.pdf
+# 📸 Diagrams & docs
+# (разрешаем diagrams/ и assets/, чтобы README рендерил картинки)
+!diagrams/
+!assets/
 
-# 🔐 Credentials or secrets (если появятся)
-*.env
+# 🔐 Credentials / secrets
 .env
+*.env
+.env.airflow
+profiles.yml
+dbt/.ci/.user.yml
 
 # 🧪 Coverage / test artifacts
 .coverage
 htmlcov/
 .pytest_cache/
 
-# ⚙️ IDE & editor files
+# ⚙️ IDE & OS files
+.DS_Store
 .vscode/
 .idea/
+.mailmap
 
-# 🚀 Docker / Compose artifacts
+# 🚀 Docker / Compose logs & pids
 *.log
+*.pid
 
-# 🧪 Temporary backups
+# 🪄 Airflow runtime folders
+airflow/logs/
+airflow/pg_data/
+
+# 📦 dbt build artifacts
+target/
+dbt_packages/
+dbt/package-lock.yml
+dbt/logs/
+dbt/target/
+
+# 🧪 Temp & backup files
 *.bak
 *.swp
 *.tmp
 
-# dbt build artifacts
-target/
-dbt_packages/
-dbt/package-lock.yml
-
-# Sensitive files
-profiles.yml
-
-# OS & IDE
-.DS_Store
-.idea/
-.vscode/
-.mailmap
-
-# local scripts
+# 🧰 Local scripts (если не нужны в проде)
 scripts/*
 
-# local logs
+# 🪵 Local logs
 .logs/
-
-# Airflow local env
-.env.airflow
-airflow/logs/
