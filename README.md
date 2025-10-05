@@ -19,6 +19,24 @@ flowchart TD
 
 ---
 
+## 🏗️ Full Stack Architecture
+
+![Full Stack Architecture](diagrams/presentation_full_stack.png)
+
+## 🧰 Technical Environments
+
+![Technical Environments](diagrams/technical_arch_environments.png)
+
+## 🔄 CI/CD Reference
+
+![CI/CD Reference](diagrams/technical_cicd_reference.png)
+
+## 📊 Data Flow
+
+![Data Flow](diagrams/presentation_data_flow.png)
+
+---
+
 ## 🧩 Tech Stack
 
 | Layer | Tools |
