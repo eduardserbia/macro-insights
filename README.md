@@ -1,90 +1,121 @@
-Modern Data Platform for Economic Analytics (2010–2025)
 
-⸻
+# 📊 Macro Insights — Data Platform MVP
 
-📊 Architecture Diagrams (2025)
+End-to-end data platform prototype for macroeconomic analytics, built as a **minimal viable product (MVP)**.
+The pipeline ingests raw data from API sources into **Amazon S3**, transforms it with **dbt**, and loads it into **ClickHouse** — ready for BI tools like **DataLens** or **Metabase**.
 
-Presentation — Full Stack
-Presentation — Data Flow
-Technical — Architecture & Environments
-Technical — CI/CD Reference
+---
 
-⸻
+## 🚀 Architecture Overview
 
-🗂️ DBT Project Structure
+```mermaid
+graph TD
+    A[🌐 API Data Sources] --> B[S3 Bucket (raw)]
+    B --> C[dbt: Transform & Model Data]
+    C --> D[ClickHouse: Data Warehouse]
+    D --> E[📊 BI Tools: Analytics & Dashboards]
+```
 
-Seeds (source data):
-	•	seeds/gdp.csv — base GDP dataset (2010–2025)
+---
 
-Staging layer (data cleaning and preparation):
-	•	models/staging/stg_gdp.sql — cleans and prepares GDP data
-	•	models/staging/stg_hello.sql — example staging model
-	•	models/staging/schema.yml — tests and documentation for staging models
+## ⚙️ Pipeline Components
 
-Marts layer (fact models and analytics):
-	•	models/marts/fct_gdp_yoy.sql — calculates year-over-year GDP growth
-	•	models/marts/fct_hello_daily.sql — demo fact table
-	•	models/marts/schema.yml — tests and documentation for marts models
+| Component        | Description                                                                 |
+|------------------|-----------------------------------------------------------------------------|
+| **S3**           | Raw data landing zone (e.g., GDP data from public APIs).                    |
+| **dbt**          | Transformation, data modeling, and data quality tests.                     |
+| **ClickHouse**   | High-performance analytical data warehouse.                                 |
+| **Airflow**      | Orchestration: triggers data load, transformation, and validation tasks.   |
+| **BI Tools**     | Visualization and insights (e.g., Yandex DataLens, Metabase).              |
 
-⸻
+✅ **MVP Pipeline Summary:**
+API → S3 → dbt → ClickHouse → BI-ready
 
-🔄 Data Flow
-	1.	Raw GDP data is loaded from seeds/gdp.csv.
-	2.	The Staging layer (stg_gdp) cleans, transforms, and normalizes the data.
-	3.	The Marts layer (fct_gdp_yoy) calculates year-over-year growth metrics.
-	4.	Results are available in ClickHouse Cloud and ready for BI visualization or downstream analytics.
+---
 
-⸻
+## 📸 Screenshots
 
-⚙️ CI/CD Process
-	•	GitHub Actions automatically rebuilds architecture diagrams whenever Python scripts change.
-	•	dbt parses and validates models on every push.
-	•	The manifest.json and other build artifacts are uploaded as CI outputs.
-	•	This ensures that documentation, models, and data pipelines remain synchronized with the latest codebase.
+### ✅ Airflow DAG — Successful Run
+![Airflow DAG](assets/airflow_dag_run_success.png)
 
-⸻
+### 📁 S3 — Raw Data Landing
+![S3 Bucket](assets/S3.png)
 
-🚀 Next Steps
-	•	📚 Enable automatic publishing of dbt HTML documentation using GitHub Pages.
-	•	☁️ Integrate AWS S3 for storing raw and historical datasets.
-	•	📈 Expand marts with additional macroeconomic indicators and data sources.
+### 🗄️ ClickHouse — Analytical Table
+![ClickHouse Table](assets/ClickHouse.png)
 
-⸻
+---
 
-🛠️ How to Run Locally
+## 📊 Data Flow Example
 
-Follow these steps to set up and run the project locally on your machine:
+1. `gdp.csv` is uploaded to S3 (`raw/YYYY-MM-DD/gdp.csv`).
+2. dbt transforms the raw GDP data into a staging table (`stg_gdp`).
+3. Final fact table (`fct_gdp_yoy`) calculates **year-over-year GDP growth**.
+4. BI tools connect directly to ClickHouse for dashboards and analysis.
 
-1. Clone the repository
+---
+
+## 🧪 Data Quality
+
+We use **dbt tests** to ensure data quality:
+
+- `NOT NULL` checks for key fields
+- Range validation for numeric values
+- Custom test: no negative GDP values
+
+Example custom test:
+
+```sql
+-- tests/non_negative_gdp.sql
+SELECT *
+FROM {{ ref('stg_gdp') }}
+WHERE gdp_usd_bn < 0
+```
+
+---
+
+## 🛠️ How to Run Locally
+
+Clone the repo:
+
+```bash
 git clone https://github.com/eduardserbia/macro-insights.git
 cd macro-insights
+```
 
-2. Create and activate a virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On macOS/Linux
-venv\Scripts\activate     # On Windows
+Start the stack:
 
-3. Install Python dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
+```bash
+docker compose up -d --build
+```
 
-4. Install dbt and ClickHouse adapter
-pip install dbt-core dbt-clickhouse
+Trigger the DAG:
 
-5. Run dbt commands
-cd dbt
-dbt deps          # install dependencies
-dbt seed          # load seed data (gdp.csv)
-dbt run           # execute all models
-dbt test          # run data tests
+```bash
+docker compose exec airflow-webserver bash
+airflow dags trigger macro_insights_daily
+```
 
-6. Generate diagrams
-python make_arch_diagrams.py
+---
 
-Generated diagrams will be available in the out/ folder.
-⸻
+## 📈 Future Enhancements
 
-💡 Macro Insights is a minimal viable product (MVP) of a modern macroeconomic data analytics platform — combining ClickHouse, dbt, CI/CD, and architectural visualization in a single repository.
+- Add additional macroeconomic indicators (e.g., CPI, inflation)
+- Build combined analytical marts with multiple metrics
+- Add incremental loads
+- Integrate CI/CD workflows for dbt
+- Deploy to a managed Airflow environment (Astronomer / MWAA)
 
-A modern end-to-end data platform for macroeconomic analytics, combining dbt, ClickHouse, CI/CD, and visual data architecture.
+---
 
+## 👤 Author
+
+**Eduard Nikolaev** — Data Platform Architect / DataOps Engineer
+🔗 [LinkedIn](https://www.linkedin.com/in/eduard-nikolaev/)
+📍 Macro Insights — Data Platform MVP
+
+---
+
+## 📜 License
+
+MIT License © 2025 Eduard Nikolaev
