@@ -1,6 +1,6 @@
 # 📊 Macro Insights — Data Platform MVP
 
-End-to-end data platform prototype for macroeconomic analytics, built as a **minimal viable product (MVP)**.  
+End-to-end data platform prototype for macroeconomic analytics, built as a **minimal viable product (MVP)**.
 The pipeline lands raw data from API sources into **Amazon S3**, transforms it with **dbt**, and materializes marts in **ClickHouse** — ready for BI tools like **DataLens** or **Metabase**.
 
 ---
@@ -8,11 +8,11 @@ The pipeline lands raw data from API sources into **Amazon S3**, transforms it w
 ## 🚀 Architecture Overview
 
 ```mermaid
-graph TD
-    A[API Data Sources] --> B[S3 Bucket (raw)]
-    B --> C[dbt: Transform & Model Data]
-    C --> D[ClickHouse: Data Warehouse]
-    D --> E[BI Tools: Analytics & Dashboards]
+flowchart TD
+    A["API Data Sources"] --> B["S3 Bucket (raw)"]
+    B --> C["dbt — Transform & Model Data"]
+    C --> D["ClickHouse — Data Warehouse"]
+    D --> E["BI Tools — Analytics & Dashboards"]
 ```
 
 ✅ **MVP Pipeline Summary:** API → S3 → dbt → ClickHouse → BI-ready
@@ -55,7 +55,7 @@ docker compose down -v
 docker compose up airflow-init
 docker compose up -d
 ```
-- UI: http://localhost:8080 (admin / admin)  
+- UI: http://localhost:8080 (admin / admin)
 - Trigger DAG: `macro_insights_daily`
 
 Check results:
@@ -83,17 +83,17 @@ Main models:
 
 ## 🔮 Future Enhancements
 
-- Add CPI, inflation and more macro indicators  
-- Build combined marts with multiple metrics  
-- Implement incremental loads  
-- CI/CD workflows for dbt  
+- Add CPI, inflation and more macro indicators
+- Build combined marts with multiple metrics
+- Implement incremental loads
+- CI/CD workflows for dbt
 - Managed orchestration (Astronomer / MWAA)
 
 ---
 
 ## 👤 Author
 
-**Eduard Nikolaev** — Data Platform Architect / DataOps Engineer  
+**Eduard Nikolaev** — Data Platform Architect / DataOps Engineer
 🔗 [LinkedIn](https://www.linkedin.com/in/eduard-nikolaev/) · 📁 *Macro Insights — Data Platform MVP*
 
 ---
