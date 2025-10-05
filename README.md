@@ -1,8 +1,7 @@
-
 # 📊 Macro Insights — Data Platform MVP
 
-End-to-end data platform prototype for macroeconomic analytics, built as a **minimal viable product (MVP)**.
-The pipeline ingests raw data from API sources into **Amazon S3**, transforms it with **dbt**, and loads it into **ClickHouse** — ready for BI tools like **DataLens** or **Metabase**.
+End-to-end data platform prototype for macroeconomic analytics, built as a **minimal viable product (MVP)**.  
+The pipeline lands raw data from API sources into **Amazon S3**, transforms it with **dbt**, and materializes marts in **ClickHouse** — ready for BI tools like **DataLens** or **Metabase**.
 
 ---
 
@@ -10,26 +9,26 @@ The pipeline ingests raw data from API sources into **Amazon S3**, transforms it
 
 ```mermaid
 graph TD
-    A[🌐 API Data Sources] --> B[S3 Bucket (raw)]
+    A[API Data Sources] --> B[S3 Bucket (raw)]
     B --> C[dbt: Transform & Model Data]
     C --> D[ClickHouse: Data Warehouse]
-    D --> E[📊 BI Tools: Analytics & Dashboards]
+    D --> E[BI Tools: Analytics & Dashboards]
 ```
+
+✅ **MVP Pipeline Summary:** API → S3 → dbt → ClickHouse → BI-ready
 
 ---
 
-## ⚙️ Pipeline Components
+## 🧩 Tech Stack
 
-| Component        | Description                                                                 |
-|------------------|-----------------------------------------------------------------------------|
-| **S3**           | Raw data landing zone (e.g., GDP data from public APIs).                    |
-| **dbt**          | Transformation, data modeling, and data quality tests.                     |
-| **ClickHouse**   | High-performance analytical data warehouse.                                 |
-| **Airflow**      | Orchestration: triggers data load, transformation, and validation tasks.   |
-| **BI Tools**     | Visualization and insights (e.g., Yandex DataLens, Metabase).              |
-
-✅ **MVP Pipeline Summary:**
-API → S3 → dbt → ClickHouse → BI-ready
+| Layer | Tools |
+|-------|-------|
+| Storage | **Amazon S3** — raw data landing, lifecycle |
+| Transform | **dbt** + **dbt-clickhouse** — staging & marts |
+| Warehouse | **ClickHouse Cloud** |
+| Orchestration | **Airflow (Docker, local)** — DAG seed/run/test |
+| CI/CD (opt) | **GitHub Actions** — diagrams & repo checks |
+| BI (opt) | **Yandex DataLens / Metabase** |
 
 ---
 
@@ -38,84 +37,67 @@ API → S3 → dbt → ClickHouse → BI-ready
 ### ✅ Airflow DAG — Successful Run
 ![Airflow DAG](assets/airflow_dag_run_success.png)
 
-### 📁 S3 — Raw Data Landing
-![S3 Bucket](assets/S3.png)
+### 📂 S3 — Raw Data Landing
+![S3 Raw Data](assets/S3.png)
 
-### 🗄️ ClickHouse — Analytical Table
+### 📈 ClickHouse — Analytical Table
 ![ClickHouse Table](assets/ClickHouse.png)
 
 ---
 
-## 📊 Data Flow Example
+## 📦 How to Run Locally
 
-1. `gdp.csv` is uploaded to S3 (`raw/YYYY-MM-DD/gdp.csv`).
-2. dbt transforms the raw GDP data into a staging table (`stg_gdp`).
-3. Final fact table (`fct_gdp_yoy`) calculates **year-over-year GDP growth**.
-4. BI tools connect directly to ClickHouse for dashboards and analysis.
+> Prereqs: Docker Desktop; AWS & ClickHouse creds (`.env` or Airflow Variables)
 
----
+```bash
+cd airflow
+docker compose down -v
+docker compose up airflow-init
+docker compose up -d
+```
+- UI: http://localhost:8080 (admin / admin)  
+- Trigger DAG: `macro_insights_daily`
 
-## 🧪 Data Quality
-
-We use **dbt tests** to ensure data quality:
-
-- `NOT NULL` checks for key fields
-- Range validation for numeric values
-- Custom test: no negative GDP values
-
-Example custom test:
-
+Check results:
+- S3: `s3://macro-insights-raw-data/raw/YYYY-MM-DD/gdp.csv`
+- ClickHouse:
 ```sql
--- tests/non_negative_gdp.sql
-SELECT *
-FROM {{ ref('stg_gdp') }}
-WHERE gdp_usd_bn < 0
+SELECT * FROM macro_insights_mart.fct_gdp_yoy LIMIT 20;
 ```
 
 ---
 
-## 🛠️ How to Run Locally
-
-Clone the repo:
+## 🧪 dbt Commands
 
 ```bash
-git clone https://github.com/eduardserbia/macro-insights.git
-cd macro-insights
+dbt seed --profiles-dir .
+dbt run --profiles-dir .
+dbt test --profiles-dir .
 ```
 
-Start the stack:
-
-```bash
-docker compose up -d --build
-```
-
-Trigger the DAG:
-
-```bash
-docker compose exec airflow-webserver bash
-airflow dags trigger macro_insights_daily
-```
+Main models:
+- `models/staging/stg_gdp.sql` — normalize raw GDP
+- `models/marts/fct_gdp_yoy.sql` — compute YoY metrics
 
 ---
 
-## 📈 Future Enhancements
+## 🔮 Future Enhancements
 
-- Add additional macroeconomic indicators (e.g., CPI, inflation)
-- Build combined analytical marts with multiple metrics
-- Add incremental loads
-- Integrate CI/CD workflows for dbt
-- Deploy to a managed Airflow environment (Astronomer / MWAA)
+- Add CPI, inflation and more macro indicators  
+- Build combined marts with multiple metrics  
+- Implement incremental loads  
+- CI/CD workflows for dbt  
+- Managed orchestration (Astronomer / MWAA)
 
 ---
 
 ## 👤 Author
 
-**Eduard Nikolaev** — Data Platform Architect / DataOps Engineer
-🔗 [LinkedIn](https://www.linkedin.com/in/eduard-nikolaev/)
-📍 Macro Insights — Data Platform MVP
+**Eduard Nikolaev** — Data Platform Architect / DataOps Engineer  
+🔗 [LinkedIn](https://www.linkedin.com/in/eduard-nikolaev/) · 📁 *Macro Insights — Data Platform MVP*
 
 ---
 
 ## 📜 License
 
-MIT License © 2025 Eduard Nikolaev
+[MIT License](./LICENSE) © 2025 Eduard Nikolaev
